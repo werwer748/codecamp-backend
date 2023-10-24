@@ -1,0 +1,16 @@
+version: "3.7"
+
+# 컴퓨터들
+services:
+  my-backend: # 컴퓨터 이름
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "4000:4000"
+
+  my-database: # 컴퓨터 이름
+    image: mongo:5
+    # ports:
+    #   - "27017:27017" => 몽고DB 컴패스에서 접속 안됨
+    #                   => 하지만, 네임리졸루션으로 express에서는 접속 됨

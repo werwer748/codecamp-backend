@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <title>회원가입 연습하기</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <!--
+        라이브러리를 설치 후 사용할때 사실 window에 들어감 => (window.)axios 이런식으로.
+        함수도 마찬가지
+    -->
+    <script>
+      function zzz() {
+        // 1. 입력한 휴대폰번호 가져오기
+        const phone = document.getElementById("phone").value;
+        console.log("번호확인!", phone);
+
+        // 2. 해당 휴대폰번호로 인증번호 API 요청하기
+        axios
+          .post("http://localhost:3000/tokens/phone", {
+            phone,
+          })
+          .then((res) => {
+            console.log(res.data);
+            document.getElementById("result").innerText = res.data;
+          });
+      }
+    </script>
+  </head>
+  <body>
+    휴대폰번호: <input id="phone" type="text" />
+    <button onclick="zzz()">인증하기</button>
+    <div id="result">인증상태</div>
+    <button>회원가입하기</button>
+  </body>
+</html>
