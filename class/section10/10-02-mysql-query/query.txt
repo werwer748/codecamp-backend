@@ -1,0 +1,89 @@
+insert into
+    product (id, name, description, price)
+    values (uuid(), '마우스', '개쩌는 마우스입니다.', 15000)
+;
+
+# MYSQL에서는 큰따옴표와 작은따옴표가 큰 차이 없지만, 다른 SQL DB는 대부분 작은따옴표를 사용
+insert into
+    product (id, name, description, price)
+    values (uuid(), '노트북', '최신 맥북!!', 20000)
+;
+
+
+insert into
+    product (id, name, description, price)
+    values (uuid(), '셔츠', '깔끔한 셔츠입니다.', 15000)
+;
+
+delete from product
+    where name = '셔츠'
+;
+
+update product
+    set price = 18000
+    where name='마우스'
+;
+
+# =========== 죠인 ===========
+select * from product;
+
+select * from product_saleslocation;
+
+insert into product_saleslocation (id, address, addressDetail, lat, lng, meetingTime)
+    values (uuid(), '구로구', '구로 디지털단지', 37.121212, 127.313454, '2023-10-30');
+
+update product
+    set productSaleslocationId = 'db7c7e98-74a9-11ee-9234-b334eafb28d4'
+    where name='마우스'
+;
+
+select p.id, name, price, address, addressDetail as '상세주소'
+    from product p, product_saleslocation ps
+    where p.productSaleslocationId = ps.id
+;
+
+# ============= 추가 기능들 ==============
+update product
+    set isSoldout = true
+    where name='노트북'
+    and price = 20000
+;
+
+update product
+    set isSoldout = true
+    where name='노트북'
+    or price = 20000
+;
+
+# =========== 주석 쉽게 다는 방법 ============
+select * from product
+    where 1 = 1 # 무조건 참을 줘서 테스트하기 편하도록 - update나 delete에서는 안하는게 좋음
+    and name = '마우스'
+    and price = 5000
+    and isSoldout = false
+;
+
+# ==== 외 주요 기능 ====
+select name, price, isSoldout from product
+    order by price, name desc # 왼쪽에서 오른쪽으로 정렬순서 우선권이 생김
+;
+
+# ==== 서브쿼리 ====
+# 서브쿼리가 먼저 실행된 후 메인 쿼리가 실행
+select name, price, isSoldout,
+   (select max(price) from product) as maxPrice # 서브쿼리
+    from product # 쿼리(인라인뷰)
+    where price >= (select avg(price) from product) # 서브쿼리 - 프로덕트 테이블에서 평균가격을 구해오고 그것보다 크거나 같은 것들만~
+;
+
+## ANSI-SQL
+
+# mysql, postgre등 DB마다 사용하는 SQL 문법이 조금씩 다릅니다.
+# 그렇게 되면 하나의 DB에서 다른 DB로 바꾸기가 불편하기 때문에, 표준 SQL을 만들었는데 그것이 바로 ANSI-SQL입니다.
+# 이 용어는 미국 표준 협회에서 만든 SQL이라는 뜻입니다
+# inner join?
+
+select *
+    from product p inner join product_saleslocation ps
+    on p.productSaleslocationId = ps.id
+;
