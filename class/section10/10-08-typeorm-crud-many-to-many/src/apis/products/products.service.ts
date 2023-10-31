@@ -54,7 +54,7 @@ export class ProductsService {
     // 2. 상품과 상품거래위치를 같이 동록하는 방법
     const { productSaleslocation, productCategoryId, productTags, ...product } =
       createProductInput;
-
+    console.log('뭐가 잘못됨??', createProductInput);
     // 2-1) 상품 거래 위치 등록
     const result = await this.productsSaleslocationsService.create({
       productSaleslocation,
@@ -74,6 +74,9 @@ export class ProductsService {
 
     const newTags = await this.productsTagsService.bulkInsert({ names: temp }); // bulk-insert는 save()로 불가능
     const tags = [...prevTags, ...newTags.identifiers];
+    // const tags = await this.productsTagsService.findAndCreateTags({
+    //   names: productTags,
+    // });
 
     const result2 = this.productsRepository.save({
       ...product,
@@ -111,14 +114,33 @@ export class ProductsService {
     //   throw new UnprocessableEntityException('이미 판매 완료된 상품입니다!');
     // }
 
+    const { productTags, ...restInput } = updateProductInput;
+    console.log('updateProductInput', updateProductInput);
+
+    const tagNames = productTags.map((el) => el.replace('#', '')); // ["전자제품", "영등포", "컴퓨터"]
+    const prevTags = await this.productsTagsService.findByNames({ tagNames });
+
+    const temp = [];
+    tagNames.forEach((el) => {
+      const isExists = prevTags.find((prevEl) => el === prevEl.name);
+      if (!isExists) temp.push({ name: el });
+    });
+
+    const newTags = await this.productsTagsService.bulkInsert({ names: temp }); // bulk-insert는 save()로 불가능
+    const tags = [...prevTags, ...newTags.identifiers];
+
     // 검증은 서비스에서 진행하자.
     this.checkSoldout({ product });
     // try { // => exception filter로 빼기
     const result = this.productsRepository.save({
       // 등록도 save로 하고 수정도 save로 한다.
       ...product, // 기존 정보를 => 수정 후, 수정되지 않은 다른 결과값까지 모두 객체로 돌려받고 싶을 때
-      ...updateProductInput, // 수정할 값으로 덮어씌운다.
-      productTags: null, // productTags는 따로 수정하자. => 이게 따로 안잡혀서 에러남
+      // productSaleslocation,
+      // productCategory: {
+      //   id: productCategoryId,
+      // },
+      ...restInput, // 수정할 값으로 덮어씌운다.
+      productTags: tags,
     });
 
     // } catch (error) {
