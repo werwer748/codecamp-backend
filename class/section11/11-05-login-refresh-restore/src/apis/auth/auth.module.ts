@@ -1,9 +1,11 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
+import { AuthController } from 'src/apis/auth/auth.controller';
 import { AuthResolver } from 'src/apis/auth/auth.resolver';
 import { AuthService } from 'src/apis/auth/auth.service';
 import { JwtAccessStrategy } from 'src/apis/auth/strategies/jwt-access.strategy';
 import { JwtRefreshStrategy } from 'src/apis/auth/strategies/jwt-refresh.strategy';
+import { JwtGoogleStrategy } from 'src/apis/auth/strategies/jwt-social-goole.strategy';
 import { UsersModule } from 'src/apis/users/users.module';
 
 @Module({
@@ -18,9 +20,11 @@ import { UsersModule } from 'src/apis/users/users.module';
   providers: [
     JwtAccessStrategy, // 어디서 추가해도 전역적으로 사용 됨
     JwtRefreshStrategy,
+    JwtGoogleStrategy,
     AuthResolver, //
     AuthService,
     // UsersService, // UsersModule에 담겨 왔기 때문에 여기서는 제거
   ],
+  controllers: [AuthController],
 })
 export class AuthModule {}

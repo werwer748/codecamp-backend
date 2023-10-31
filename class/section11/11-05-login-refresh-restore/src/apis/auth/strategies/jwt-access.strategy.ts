@@ -12,7 +12,7 @@ export class JwtAccessStrategy extends PassportStrategy(Strategy, 'access') {
       //     return accessToken;
       // },
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(), // 위의 방법을 대신하는 방법
-      secretOrKey: '나의비밀번호서명',
+      secretOrKey: process.env.ACCESSTOKEN_SECRET,
     });
   }
 
