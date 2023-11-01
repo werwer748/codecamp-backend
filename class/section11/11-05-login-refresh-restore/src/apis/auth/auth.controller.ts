@@ -2,16 +2,9 @@ import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Request, Response } from 'express';
 import { AuthService } from 'src/apis/auth/auth.service';
+import { DynamicAuthGuard } from 'src/apis/auth/guards/dynamic-auth.guard-04';
+import { IOAuthUser } from 'src/apis/auth/interfaces/auth-service.interface';
 import { UsersService } from 'src/apis/users/users.service';
-
-interface IOAuthUser {
-  user: {
-    name: string;
-    email: string;
-    password: string;
-    age: number;
-  };
-}
 
 @Controller()
 export class AuthController {
@@ -20,26 +13,22 @@ export class AuthController {
     private readonly authService: AuthService,
   ) {}
 
-  @UseGuards(AuthGuard('google'))
-  @Get('/login/google')
-  async loginGoogle(@Req() req: Request & IOAuthUser, @Res() res: Response) {
-    // 프로필을 받아온 다음, 로그인 처리해야 하는 곳.
-    // 1. 회원 조회
-    let user = await this.usersService.findOneByEmail({
-      email: req.user.email,
-    });
-
-    // 2. 회원가입이 안되어있다면 자동으로 회원가입
-    if (!user) {
-      user = await this.usersService.create({
-        ...req.user,
-      });
-    }
-
-    // 3. 회원가입이 돼있다면? 로그인(accessToken, refreshToken 만들어서 브라우저에 전송)
-    this.authService.setRefreshToken({ user, res });
-    res.redirect(
-      'http://localhost:5500/class/section11/frontend/social-login.html',
-    );
+  @Get('/login/:social')
+  // @UseGuards(AuthGuard('google')) // UseGuards => AuthGuard => canActivate 순으로 실행 됨
+  @UseGuards(DynamicAuthGuard) // canActivate가 실행 되는 것을 활용하여, 동적으로 AuthGuard를 선택할 수 있음
+  loginOAuth(@Req() req: Request & IOAuthUser, @Res() res: Response) {
+    return this.authService.loginOAuth({ req, res });
   }
+
+  // @UseGuards(AuthGuard('kakao'))
+  // @Get('/login/kakao')
+  // loginOAuth(@Req() req: Request & IOAuthUser, @Res() res: Response) {
+  //   return this.authService.loginOAuth({ req, res });
+  // }
+
+  // @UseGuards(AuthGuard('naver'))
+  // @Get('/login/naver')
+  // loginOAuth(@Req() req: Request & IOAuthUser, @Res() res: Response) {
+  //   return this.authService.loginOAuth({ req, res });
+  // }
 }

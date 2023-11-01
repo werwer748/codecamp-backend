@@ -4,6 +4,7 @@ import * as bcrypt from 'bcrypt';
 import {
   IAuthServiceGetAccessToken,
   IAuthServiceLogin,
+  IAuthServiceLoginOAuth,
   IAuthServiceRestoreAccessToken,
   IAuthServiceSetRefreshToken,
 } from 'src/apis/auth/interfaces/auth-service.interface';
@@ -74,5 +75,25 @@ export class AuthService {
       { sub: user.id }, //
       { secret: process.env.ACCESSTOKEN_SECRET, expiresIn: '1h' },
     );
+  }
+
+  async loginOAuth({ req, res }: IAuthServiceLoginOAuth) {
+    let user = await this.usersService.findOneByEmail({
+      email: req.user.email,
+    });
+
+    // 2. 회원가입이 안되어있다면 자동으로 회원가입
+    if (!user) {
+      user = await this.usersService.create({
+        ...req.user,
+      });
+    }
+
+    // 3. 회원가입이 돼있다면? 로그인(accessToken, refreshToken 만들어서 브라우저에 전송)
+    this.setRefreshToken({ user, res });
+    res.redirect(
+      'http://localhost:5500/class/section11/frontend/social-login.html',
+    );
+    console.log('user::: ', user);
   }
 }

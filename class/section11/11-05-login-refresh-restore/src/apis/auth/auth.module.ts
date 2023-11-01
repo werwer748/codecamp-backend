@@ -6,6 +6,8 @@ import { AuthService } from 'src/apis/auth/auth.service';
 import { JwtAccessStrategy } from 'src/apis/auth/strategies/jwt-access.strategy';
 import { JwtRefreshStrategy } from 'src/apis/auth/strategies/jwt-refresh.strategy';
 import { JwtGoogleStrategy } from 'src/apis/auth/strategies/jwt-social-goole.strategy';
+import { JwtKakaotrategy } from 'src/apis/auth/strategies/jwt-social-kakao.strategy';
+import { JwtNavertrategy } from 'src/apis/auth/strategies/jwt-social-naver.strategy';
 import { UsersModule } from 'src/apis/users/users.module';
 
 @Module({
@@ -21,6 +23,8 @@ import { UsersModule } from 'src/apis/users/users.module';
     JwtAccessStrategy, // 어디서 추가해도 전역적으로 사용 됨
     JwtRefreshStrategy,
     JwtGoogleStrategy,
+    JwtNavertrategy,
+    JwtKakaotrategy,
     AuthResolver, //
     AuthService,
     // UsersService, // UsersModule에 담겨 왔기 때문에 여기서는 제거
