@@ -1,0 +1,23 @@
+# 전체 DB 조회
+show databases;
+
+# 사용할 DB 지정
+use myproject;
+
+# 테이블 조회하기
+show tables;
+
+# DB 설정값 조회하기 (커넥션 최댓값 => max_connections)
+show variables;
+
+# 커넥션 최대값 바꾸기
+set global max_connections = 15;
+
+# 현재 DB 상태 확인(Threads_connected)
+show status;
+
+# 현재 연결된 커넥션 목록 확인
+show processlist;
+
+# 커넥션 끊기(kill 커넥션 ID)
+kill 34;

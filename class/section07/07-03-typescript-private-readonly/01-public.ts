@@ -1,10 +1,10 @@
 // public
 
 // class Monster2 {
-//
+
 // power; => public, private, protected, readonly 중 하나라도 있으면 생략 가능
 //   constructor(public power: any) {
-//
+
 // this.power = power; public, private, protected, readonly 중 하나라도 있으면 생략 가능
 //   }
 
