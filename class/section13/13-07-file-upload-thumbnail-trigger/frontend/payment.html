@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <title>결제페이지</title>
+    <!-- axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <!-- iamport -->
+    <script src="https://cdn.iamport.kr/v1/iamport.js"></script>
+    <script>
+      const requestPay = () => {
+        IMP.init("imp15760240"); // 예: 'imp00000000a'
+        IMP.request_pay(
+          {
+            pg: "kakaopay",
+            pay_method: "card",
+            // merchant_uid: "ORD20180131-0000011", // 주문번호
+            name: "노르웨이 회전 의자",
+            amount: 100, // 숫자 타입
+            buyer_email: "gildong@gmail.com",
+            buyer_name: "홍길동",
+            buyer_tel: "010-4242-4242",
+            buyer_addr: "서울특별시 강남구 신사동",
+            buyer_postcode: "01181",
+          },
+          function (rsp) {
+            // callback
+            if (rsp.success) {
+              // 결제 성공 시 로직
+              axios
+                .post(
+                  "http://localhost:3000/graphql",
+                  {
+                    // graphql query
+                    query: `
+                    mutation {
+                      createPointTransaction(impUid: "${rsp.imp_uid}", amount: ${rsp.paid_amount}) {
+                        id
+                        impUid
+                        amount
+                        status
+                      }
+                    }
+                  `,
+                  },
+                  {
+                    headers: {
+                      Authorization:
+                        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzNmU5NWVjZS00NjU5LTRjMWItOGYyZS1jMWI2YzFiMDk3ZDUiLCJpYXQiOjE2OTkyNzk0MTQsImV4cCI6MTY5OTI4MzAxNH0.NiLLbS_Mnz4mhKMD4fUKAqCiuM1HT0z-RsDHSppoLJw",
+                    },
+                  }
+                )
+                .then((res) => {
+                  console.log(res);
+                  alert("결제에 성공했습니다!");
+                });
+            } else {
+              // 결제 실패 시 로직
+              alert("결제에 실패했습니다! 다시 시도해 주세요!");
+            }
+          }
+        );
+      };
+    </script>
+  </head>
+  <body>
+    <button onclick="requestPay()">결제하기</button>
+  </body>
+</html>
