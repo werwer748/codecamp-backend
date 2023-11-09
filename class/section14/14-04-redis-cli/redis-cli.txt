@@ -1,0 +1,29 @@
+CONTAINER ID   IMAGE          COMMAND                   CREATED          STATUS          PORTS                    NAMES
+2373b252f342   redis:latest   "docker-entrypoint.s…"   56 seconds ago   Up 56 seconds   0.0.0.0:6379->6379/tcp   backend-my-redis-1
+(base)  gangjungi@Hugos-MacBook  ~/Desktop/codecamp-backend/class/section14/14-04-redis/backend   main  docker exec -it 2373b252f342 /bin/bash            
+root@2373b252f342:/data# redis-cli
+127.0.0.1:6379> keys * // 저장된 값 확인
+(empty array)
+127.0.0.1:6379> set qqq apple
+OK
+127.0.0.1:6379> get qqq
+"apple"
+127.0.0.1:6379> ttl qqq
+(integer) -1 // 영구저장상태
+127.0.0.1:6379> expire qqq 20 // 만료시간 주기
+(integer) 1
+127.0.0.1:6379> ttl qqq
+(integer) 16
+127.0.0.1:6379> ttl qqq
+(integer) 11
+127.0.0.1:6379> ttl qqq
+(integer) 8
+127.0.0.1:6379> ttl qqq
+(integer) 2
+127.0.0.1:6379> ttl qqq
+(integer) -2 // 삭제된 값의 시간값
+127.0.0.1:6379> get qqq
+(nil) // 제 조회시 나오지 않음
+127.0.0.1:6379> keys * // 마찬가지로 나오지 않음
+(empty array)
+127.0.0.1:6379> 
