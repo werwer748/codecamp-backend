@@ -1,0 +1,26 @@
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Product } from 'src/apis/products/entities/product.entity';
+import { ProductsResolver } from 'src/apis/products/products.resolver';
+import { ProductsService } from 'src/apis/products/products.service';
+import { ProductSaleslocation } from 'src/apis/productsSaleslocations/entities/productSaleslocation.entity';
+import { ProductsSaleslocationsService } from 'src/apis/productsSaleslocations/productsSaleslocations.service';
+import { ProductTag } from 'src/apis/productsTags/entities/productTag.entity';
+import { ProductsTagsService } from 'src/apis/productsTags/productsTags.service';
+
+@Module({
+  imports: [
+    TypeOrmModule.forFeature([
+      Product, //
+      ProductSaleslocation,
+      ProductTag,
+    ]),
+  ],
+  providers: [
+    ProductsResolver, //
+    ProductsService,
+    ProductsSaleslocationsService,
+    ProductsTagsService,
+  ],
+})
+export class ProductsModule {}
